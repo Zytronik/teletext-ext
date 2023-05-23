@@ -18,13 +18,30 @@ function scrapeContent(){
 }
 
 function getHeaderContents(){
-    /* let r = {
-        "links" : 
-    }; */
+    let rLinks;
+    let r = {
+        "links" : rLinks
+    };
     let headerLinks = document.querySelectorAll("header nav:first-of-type a, header nav.main a");
     headerLinks.forEach((link)=>{
-        if(link.hasAttribute("href") && link.offsetWidth > 5 && !link.hasAttribute("hreflang") && !linkTextBanList.some(v => link.innerHTML.toLowerCase().includes(v))){
-            
+        if(link.hasAttribute("href") &&
+        link.offsetWidth > 5 &&
+        !link.hasAttribute("hreflang") &&
+        !linkTextBanList.some(v => link.innerHTML.toLowerCase().includes(v)) &&
+        link.children.length == 0 || link.children[0].tagName === "IMG"){
+            let type = "text";
+            let content = link.innerHTML;
+            if(link.children[0].tagName === "IMG"){
+                type = "img";
+                content = link.children[0];
+            }
+            rLinks.push({
+                "url" : link.href,
+                "content" : {
+                    "type" : type,
+                    "elem" : content,
+                }
+            })
         }
     });
         
