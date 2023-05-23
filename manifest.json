@@ -6,14 +6,10 @@
     "icons": {
         "201": "img/klee.gif"
     },
-    "browser_action": {
-        "default_popup": "index.html",
-        "browser_style": true
-    },
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "addon@example.com",
-            "strict_min_version": "42.0"
+    "content_scripts": [
+        {
+          "matches": ["<all_urls>"],
+          "js": ["/js/main.js"]
         }
-    }
+      ]
 }
