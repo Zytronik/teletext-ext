@@ -73,7 +73,12 @@ function pixelitTest(){
       }
 
     const px = new pixelit(pixelitConfig);
+<<<<<<< Updated upstream
     console.log(px);
     px.setDrawTo(pixelitCanvas);
     px.draw().pixelate().convertPalette();
+=======
+    px.setDrawTo(pixelitCanvas).draw().pixelate().convertPalette();
+    //var newImage = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+>>>>>>> Stashed changes
 }
