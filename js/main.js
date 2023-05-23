@@ -12,7 +12,7 @@ function scrapeContent(){
 }
 
 function getHeaderContents(){
-    let rLinks;
+    let rLinks = [];
     let r = {
         "links" : rLinks
     };
@@ -22,10 +22,10 @@ function getHeaderContents(){
         link.offsetWidth > 5 &&
         !link.hasAttribute("hreflang") &&
         !linkTextBanList.some(v => link.innerHTML.toLowerCase().includes(v)) &&
-        link.children.length == 0 || link.children[0].tagName === "IMG"){
+        link.children.length == 0 || (link.children.length > 0 && link.children[0].tagName === "IMG")){
             let type = "text";
             let content = link.innerHTML;
-            if(link.children[0].tagName === "IMG"){
+            if(link.children.length > 0 && link.children[0].tagName === "IMG"){
                 type = "img";
                 content = link.children[0];
             }
@@ -85,7 +85,6 @@ function pixelitTest(){
 
     const px = new pixelit(pixelitConfig);
     console.log(px);
-    px.setDrawTo(pixelitCanvas);
     px.draw().pixelate().convertPalette();
 
     //var newImage = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
