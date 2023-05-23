@@ -1,6 +1,6 @@
 document.onload = () => {
     scrapeContent();
-    pixelitTest();
+    //pixelitTest();
 };
 
 var pageContents = {};
