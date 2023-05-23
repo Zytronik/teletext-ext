@@ -1,0 +1,19 @@
+{
+    "name": "test-extension",
+    "version": "0.0.1",
+    "description": "lorem ipsum i guess",
+    "manifest_version": 2,
+    "icons": {
+        "201": "img/klee.gif"
+    },
+    "browser_action": {
+        "default_popup": "index.html",
+        "browser_style": true
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "addon@example.com",
+            "strict_min_version": "42.0"
+        }
+    }
+}
