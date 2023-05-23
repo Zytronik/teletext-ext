@@ -47,6 +47,8 @@ function setupPixelit(){
     canvas.getContext("2d");
     canvas.style.height = "200px";
     canvas.style.width = "200px";
+    canvas.style.top = "0px";
+    canvas.style.left = "0px";
     canvas.style.position = "fixed";
     canvas.setAttribute("id", "pixelitCanvas");
     document.body.appendChild(canvas);
