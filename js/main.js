@@ -1,18 +1,24 @@
+const linkTextBanList = ["sign", "login"];
+
 scrapeContent();
 
 var pageContents = {};
 
 function scrapeContent(){
-    console.log("test");
     return pageContents = {
         "header" : getHeaderContents()
     };
 }
 
 function getHeaderContents(){
-    let headerLinks = document.querySelectorAll("header a");
+    /* let r = {
+        "links" : 
+    }; */
+    let headerLinks = document.querySelectorAll("header nav:first-of-type a, header nav.main a");
     headerLinks.forEach((link)=>{
-        console.log(link);
+        if(link.hasAttribute("href") && link.offsetWidth > 5 && !link.hasAttribute("hreflang") && !linkTextBanList.some(v => link.innerHTML.toLowerCase().includes(v))){
+            
+        }
     });
         
 }
