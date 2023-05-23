@@ -1,10 +1,4 @@
 const linkTextBanList = ["sign", "login"];
-const colorPalette = [
-    [26,28,44],
-    [93,39,93],
-    [177, 62, 83],
-    [239, 125, 87]
-];
 
 scrapeContent();
 setupPixelit();
@@ -79,9 +73,9 @@ function pixelitTest(){
         from : pixelitImage, 
         //defaults to document.getElementById("pixelitimg")
         scale : 20,
-        //from 0-50, defaults to 8
+        
         palette : [[26,28,44], [93,39,93], [177, 62, 83],[239, 125, 87]], 
-        //defaults to a fixed pallete
+        
         
         maxHeight: pixelitCanvas.height, 
         //defaults to null
@@ -93,4 +87,6 @@ function pixelitTest(){
     console.log(px);
     px.setDrawTo(pixelitCanvas);
     px.draw().pixelate().convertPalette();
+
+    //var newImage = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 }
