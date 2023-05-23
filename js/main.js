@@ -58,8 +58,9 @@ function setupPixelit(){
     img.setAttribute("src", imgUrl);
     img.setAttribute("id", "pixelitImage");
     document.body.appendChild(img);
-    
-    pixelitTest();
+    img.onload = function () {
+        pixelitTest();		
+    };
 }
 
 function pixelitTest(){
