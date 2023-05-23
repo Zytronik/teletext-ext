@@ -1,1 +1,9 @@
-console.log("test");
+document.onload = () => {
+    scrapeContent();
+};
+
+var pageContents = {};
+
+function scrapeContent(){
+        
+}
