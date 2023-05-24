@@ -60,6 +60,7 @@ function setupPixelit(){
     img.setAttribute("src", imgUrl);
     img.setAttribute("id", "pixelitImage");
     document.body.appendChild(img);
+    
     img.onload = function () {
         pixelitTest();		
     };
