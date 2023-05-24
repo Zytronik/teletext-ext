@@ -118,6 +118,7 @@ body{
     background-color: black;
     font-family: 'ZX Spectrum';
     color: white;
+    font-size: 20px;
 }
 
 h1{
@@ -133,9 +134,21 @@ h2, h3, h4{
 
 /************ HEADER  ***************/
 
-header{
+.top-bar{
     position: fixed;
     top: 0;
+    left: 0;
+    width: 100vw;
+    height: 40px;
+    color: yellow;
+    font-family: 'Pixel Gosub';
+    text-align: right;
+    padding: 5px 10px;
+}
+
+header{
+    position: fixed;
+    top: 40px;
     left: 0;
     width: 100vw;
     height: 15vh;
@@ -185,6 +198,7 @@ footer{
     flex-wrap: wrap;
     border: 2px solid white;
     justify-content: space-between;
+    background: black
 }
 
 footer #shortcut-nav{
@@ -225,4 +239,38 @@ footer #nav #nav-input{
 footer #nav #nav-input:focus-visible{
     outline: none;
    
+}
+
+
+
+/************ Main Nav Section  ***************/
+
+#nav-section{
+    margin-top: 15vh;
+    padding: 10vh 10vw;
+    
+}
+
+#nav-section nav {
+    max-height: 100%;
+
+}
+
+#nav-section nav ul {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: calc(85vh - 220px);
+}
+
+#nav-section nav ul li{   
+    width: 50%;
+    padding: 20px 40px;
+    font-size: 1.5rem;
+    color: red;
+}
+
+#nav-section nav ul li span:first-of-type{   
+    margin-right: 20px;
+    color: white;
 }
