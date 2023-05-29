@@ -1,12 +1,47 @@
+console.log("script loaded---");
 var pageContents = scrapeContent();
 console.log(pageContents);
-setupPixelit();
+//deleteDOM();
+//setupPixelit();
+loadHTMLFile('teletext.html');
+
+function loadHTMLFile(url){
+    url = browser.runtime.getURL(url);
+    fetch(url)
+    .then(function(response) {
+        return response.text()
+    })
+    .then(function(html) {
+        var parser = new DOMParser();
+        var teletextDocument = parser.parseFromString(html, "text/html");
+        deleteDOM();
+        document.querySelector("html").append(teletextDocument.head);
+        document.querySelector("html").append(teletextDocument.body);
+        var link  = document.createElement('link');
+        link.rel  = 'stylesheet';
+        link.type = 'text/css';
+        link.href = browser.runtime.getURL('css/teletext.css');
+        document.querySelector("head").appendChild(link);
+    })
+    .catch(function(err) {  
+        console.log('Failed to fetch page: ', err);  
+    });
+}
 
 function scrapeContent(){
     return  {
         "header" : getHeaderContents(),
         "main" : getBodyContents(),
     };
+}
+
+function deleteDOM(){
+    let eles = document.querySelectorAll("html > *, html iframe, html script, html link");
+    eles.forEach((ele)=>{
+        ele.remove();
+    }); 
+    document.querySelector("html").removeAttribute("class");
+    /* document.querySelector("body").remove(); */
 }
 
 function getBodyContents(){
@@ -52,7 +87,7 @@ function getHeaderContents(){
     return r;
 }
 
-function getLink(link, selector, notInSelector = " ", notInSelector2 = " "){
+function getLink(link, notInSelector = " ", notInSelector2 = " "){
     let r = {};
     if($(link).parents(notInSelector).length <= 0 && 
         $(link).parents(notInSelector2).length <= 0 && 
@@ -84,7 +119,7 @@ function getLink(link, selector, notInSelector = " ", notInSelector2 = " "){
     return r;
 }
 
-function getTitleAndSiblings(title, selector, notInSelector = " ", notInSelector2 = " "){
+function getTitleAndSiblings(title, notInSelector = " ", notInSelector2 = " "){
     let r = {};
 
     if ($(title).parents('a').length <= 0 && $(title).parents(notInSelector).length <= 0 && $(title).parents(notInSelector2).length <= 0 && title.offsetWidth > 5) {
@@ -127,12 +162,12 @@ function getContents(selector, notInSelector = " ", notInSelector2 = " "){
     let contents = document.querySelectorAll(selector+" h1, "+selector+" h2, "+selector+" h3, "+selector+" h4, " + selector + " a");
     contents.forEach((elem)=>{
         if(elem.tagName === "A"){
-            let link = getLink(elem, selector, notInSelector, notInSelector2);
+            let link = getLink(elem, notInSelector, notInSelector2);
             if(!isEmpty(link)){
                 rContents.push(link);
             }
         }else if(elem.tagName.includes("H")){
-            let title = getTitleAndSiblings(elem, selector, notInSelector, notInSelector2);
+            let title = getTitleAndSiblings(elem, notInSelector, notInSelector2);
             if(!isEmpty(title)){
                 rContents.push(title);
             }

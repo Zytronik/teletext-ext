@@ -1,15 +1,21 @@
 {
-    "name": "test-extension",
-    "version": "0.0.1",
-    "description": "lorem ipsum i guess",
-    "manifest_version": 2,
-    "icons": {
-        "201": "img/klee.gif"
-    },
-    "content_scripts": [
-        {
-          "matches": ["<all_urls>"],
-          "js": ["/js/jquery.min.js", "/js/pixelit.js", "/js/main.js" ]
-        }
+  "name": "test-extension",
+  "version": "0.0.1",
+  "description": "lorem ipsum i guess",
+  "manifest_version": 2,
+  "icons": {
+    "201": "img/klee.gif"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "/js/jquery.min.js",
+        "/js/pixelit.js",
+        "/js/main.js"
       ]
+    }
+  ]
 }
