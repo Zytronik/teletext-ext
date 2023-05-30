@@ -117,9 +117,10 @@ body{
 
 h1{
     font-family: 'Kemco Pixel';
-    font-size: 8vh;
+    font-size: 4rem;
     text-align: center;
     color: red;
+
 }
 
 h2, h3, h4{
@@ -194,6 +195,7 @@ header .title-container{
     padding: 20px 40px;
     background: blue;
     flex: 1;
+    overflow: hidden;
 }
 
 
