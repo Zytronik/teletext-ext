@@ -127,6 +127,18 @@ h2, h3, h4{
     font-weight: normal;
 }
 
+h3{
+    font-size: 2.5rem;
+    color: blue;
+    margin-bottom: 20px;
+    background: white;
+}
+
+p{
+    font-size: 1rem;
+    line-height: 2rem;
+}
+
 
 /************ HEADER  ***************/
 
@@ -142,6 +154,7 @@ h2, h3, h4{
     max-width: 1400px;
     left: 50%;
     transform: translateX(-50%);
+    background: black;
 }
 
 header{
@@ -245,11 +258,9 @@ footer #nav #nav-input:focus-visible{
 
 
 /************ Main Nav Section  ***************/
-
-#nav-section{
+section{
     margin-top: 15vh;
     padding: 10vh 10vw;
-    
 }
 
 #nav-section nav {
@@ -274,4 +285,29 @@ footer #nav #nav-input:focus-visible{
 #nav-section nav ul li span:first-of-type{   
     margin-right: 20px;
     color: white;
+}
+
+#content-section > article{
+ margin-bottom: 200px;
+}
+
+#content-section > article.large-image img{
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#content-section > article.small-image{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+#content-section > article.small-image img{
+    width: calc(50% - 20px);
+ }
+
+#content-section > article.small-image p{
+    width: calc(50% - 20px);
 }
