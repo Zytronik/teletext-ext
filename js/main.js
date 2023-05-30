@@ -15,18 +15,53 @@ function loadHTMLFile(url){
         var parser = new DOMParser();
         var teletextDocument = parser.parseFromString(html, "text/html");
         deleteDOM();
-        document.querySelector("html").append(teletextDocument.head);
-        document.querySelector("html").append(teletextDocument.body);
-        var link  = document.createElement('link');
-        link.rel  = 'stylesheet';
-        link.type = 'text/css';
-        link.href = browser.runtime.getURL('css/teletext.css');
-        document.querySelector("head").appendChild(link);
+        setupHTML(teletextDocument);
+        loadData();
     })
     .catch(function(err) {  
         console.log('Failed to fetch page: ', err);  
     });
 }
+
+function loadData(){
+    loadNavData();
+    loadFavIMG();
+}
+
+function loadFavIMG(){
+    document.querySelector(".logo-container img").src = pageContents.header.favicon;
+}
+
+function loadNavData(){
+    let navList = document.querySelector("#nav-section nav ul");
+    pageContents.header.navLinks.forEach((ele, i)=>{
+        navList.innerHTML += '<li><a href=""><span>'+((i+1) * 100)+'</span><span>'+ele.content.data+'</span></a></li>'
+    });
+}
+
+function getFavicon(){
+    var favicon = undefined;
+    var nodeList = document.getElementsByTagName("link");
+    for (var i = 0; i < nodeList.length; i++)
+    {
+        if((nodeList[i].getAttribute("rel") == "icon")||(nodeList[i].getAttribute("rel") == "shortcut icon"))
+        {
+            favicon = nodeList[i].getAttribute("href");
+        }
+    }
+    return favicon;        
+}
+
+function setupHTML(teletextDocument) {
+    document.querySelector("html").append(teletextDocument.head);
+    document.querySelector("html").append(teletextDocument.body);
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = browser.runtime.getURL('css/teletext.css');
+    document.querySelector("head").appendChild(link);
+}
+
 
 function scrapeContent(){
     return  {
@@ -57,6 +92,7 @@ function getHeaderContents(){
     const linkTextBanList = ["sign", "login"];
     let rNavLinks = [];
     let r = {
+        "favicon" : getFavicon(),
         "contents" : getContents("header"),
         "navLinks" : rNavLinks, //navigation Links
         //"imgs" : getImgs("header"), //all imgs (not inside Links)
@@ -67,7 +103,9 @@ function getHeaderContents(){
         link.offsetWidth > 5 &&
         !link.hasAttribute("hreflang") &&
         !linkTextBanList.some(v => link.innerHTML.toLowerCase().includes(v)) &&
-        link.children.length == 0 || (link.children.length > 0 && link.children[0].tagName === "IMG")){
+        link.children.length == 0 
+        /* || (link.children.length > 0 && link.children[0].tagName === "IMG") */
+        && (link.tagName === "P" || link.tagName === "A" || link.tagName === "SPAN")){
             let type = "text";
             let content = link.innerHTML.replace(/<\/?[^>]+(>|$)/g, "");
             if(link.children.length > 0 && link.children[0].tagName === "IMG"){
@@ -132,7 +170,7 @@ function getTitleAndSiblings(title, notInSelector = " ", notInSelector2 = " "){
             }else if(sibling.tagName === "IMG"){
                 rIMGEles.push(sibling);
             }else{
-                if (sibling.querySelector("h1, h2, h3, h4") != null && sibling.querySelector("h1, h2, h3, h4").length <= 0) {
+                if (sibling.nodeType === Node.ELEMENT_NODE && sibling.querySelector("h1, h2, h3, h4") != null && sibling.querySelector("h1, h2, h3, h4").length <= 0) {
                     let pElems = sibling.querySelectorAll("p");
                     pElems.forEach((pEle)=>{
                         rPEles.push(pEle.innerHTML.replace(/<\/?[^>]+(>|$)/g, ""));
