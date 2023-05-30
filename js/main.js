@@ -26,6 +26,19 @@ function loadHTMLFile(url){
 function loadData(){
     loadNavData();
     loadFavIMG();
+    loadSiteTitle();
+    setInterval(setCurrentDate, 1000);
+}
+
+function getTime() {
+    var d = new Date();
+    var m = d.getMinutes();
+    var h = d.getHours();
+    return ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2);
+}
+
+function loadSiteTitle(){
+    document.querySelector("h1").innerHTML = pageContents.header.siteTitle;
 }
 
 function loadFavIMG(){
@@ -35,8 +48,16 @@ function loadFavIMG(){
 function loadNavData(){
     let navList = document.querySelector("#nav-section nav ul");
     pageContents.header.navLinks.forEach((ele, i)=>{
-        navList.innerHTML += '<li><a href=""><span>'+((i+1) * 100)+'</span><span>'+ele.content.data+'</span></a></li>'
+        navList.innerHTML += '<li><a href="'+ele.url+'"><span>'+((i+1) * 100)+'</span><span>'+ele.content.data+'</span></a></li>'
     });
+}
+
+function setCurrentDate() {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    document.querySelector("#datetime").innerHTML = dd + '.' + mm + '.' + yyyy + " " + getTime();
 }
 
 function getFavicon(){
@@ -88,10 +109,28 @@ function getBodyContents(){
     return r;
 }
 
+function getSiteTitle(){
+    let h1 = "";
+    if (document.querySelector("h1").children[0] != undefined) {
+        let ele = document.querySelector("h1").children[0];
+        while(ele.children[0] != undefined){
+            ele = ele.children[0];
+        }
+        h1 = ele.innerHTML;
+    }else{
+        h1 = document.querySelector("h1").innerHTML;
+    }
+    if(h1 != undefined && h1 !== "" && h1.length){
+        return h1;
+    }
+    return document.title;
+}
+
 function getHeaderContents(){
     const linkTextBanList = ["sign", "login"];
     let rNavLinks = [];
     let r = {
+        "siteTitle" : getSiteTitle(),
         "favicon" : getFavicon(),
         "contents" : getContents("header"),
         "navLinks" : rNavLinks, //navigation Links
