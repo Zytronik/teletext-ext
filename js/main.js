@@ -1,5 +1,6 @@
 console.log("script loaded---");
 var pageContents = scrapeContent();
+var navArray = [];
 console.log(pageContents);
 //deleteDOM();
 //setupPixelit();
@@ -28,6 +29,9 @@ function loadData(){
     loadFavIMG();
     loadSiteTitle();
     setInterval(setCurrentDate, 1000);
+    initiateNav();
+    focusNavInput();
+    disableScrollWheel();
 }
 
 function getTime() {
@@ -49,7 +53,7 @@ function loadNavData(){
     let navList = document.querySelector("#nav-section nav ul");
     if(pageContents.header.navLinks.length > 0){
         pageContents.header.navLinks.forEach((ele, i)=>{
-            navList.innerHTML += '<li><a href="'+ele.url+'"><span>'+((i+1) * 100)+'</span><span>'+ele.content.data+'</span></a></li>'
+            navList.innerHTML += '<li><a href="'+ele.url+'"><span class="number">'+((i+1) * 100)+'</span><span>'+ele.content.data+'</span></a></li>'
         });
     }else{
         document.querySelector("#nav-section").style.display = "none";
@@ -341,4 +345,58 @@ function pixelitTest(){
     px.draw().pixelate().convertPalette();
 
     //var newImage = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+}
+
+function focusNavInput(){
+    document.addEventListener("keydown", function (e) {
+        let numberInput = document.querySelector('#nav-input');        
+        if(numberInput != document.activeElement){
+            if (isNaN(e.key) === false) {
+                numberInput.focus();
+            } 
+        }else{
+            if (e.key == 'ArrowUp' || e.key == 'ArrowDown') {
+                numberInput.blur();
+            } 
+        };
+
+    });
+}
+
+function initiateNav() {
+    let numbers = document.querySelectorAll(".number");
+    //var navArray = [];
+    navArray.digits = [];
+    navArray.link = [];
+    numbers.forEach((number) => {
+        navArray.digits.push(number.innerHTML);
+        navArray.link.push($(number).parent().attr('href'));
+    });
+
+    let numberInput = document.querySelector('#nav-input');
+
+    numberInput.addEventListener("keydown", function (e) {
+        if (e.code === "Enter") {  //checks whether the pressed key is "Enter"
+            let number = numberInput.value;
+            numberInput.value= "";
+            numberNav(number);
+        } 
+        
+    });
+}
+
+function numberNav(number) {
+
+        if(number == 1){
+            document.querySelector('#nav-section').style.display = "block";
+        }else{
+            let navIndex = navArray.digits.indexOf(number);
+            window.location.href = navArray.link[navIndex];
+        }   
+}
+
+function disableScrollWheel(){
+    window.addEventListener("wheel", function (e) {
+        e.preventDefault();
+      }, { passive: false });
 }
