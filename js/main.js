@@ -47,9 +47,13 @@ function loadFavIMG(){
 
 function loadNavData(){
     let navList = document.querySelector("#nav-section nav ul");
-    pageContents.header.navLinks.forEach((ele, i)=>{
-        navList.innerHTML += '<li><a href="'+ele.url+'"><span>'+((i+1) * 100)+'</span><span>'+ele.content.data+'</span></a></li>'
-    });
+    if(pageContents.header.navLinks.length > 0){
+        pageContents.header.navLinks.forEach((ele, i)=>{
+            navList.innerHTML += '<li><a href="'+ele.url+'"><span>'+((i+1) * 100)+'</span><span>'+ele.content.data+'</span></a></li>'
+        });
+    }else{
+        document.querySelector("#nav-section").style.display = "none";
+    }
 }
 
 function setCurrentDate() {
@@ -65,10 +69,13 @@ function getFavicon(){
     var nodeList = document.getElementsByTagName("link");
     for (var i = 0; i < nodeList.length; i++)
     {
-        if((nodeList[i].getAttribute("rel") == "icon")||(nodeList[i].getAttribute("rel") == "shortcut icon"))
+        if((nodeList[i].getAttribute("rel") == "icon")||(nodeList[i].getAttribute("rel") == "shortcut icon") || (nodeList[i].getAttribute("rel") == "image_src"))
         {
             favicon = nodeList[i].getAttribute("href");
         }
+    }
+    if(favicon === undefined){
+
     }
     return favicon;        
 }
@@ -127,7 +134,7 @@ function getSiteTitle(){
 }
 
 function getHeaderContents(){
-    const linkTextBanList = ["sign", "login"];
+    const linkTextBanList = ["sign", "login", "log in"];
     let rNavLinks = [];
     let r = {
         "siteTitle" : getSiteTitle(),
