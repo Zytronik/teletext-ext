@@ -89,13 +89,22 @@ function loadContent(){
                 console.log("nur titel");
                 container.innerHTML += createTitelBildText(ele);
             }
-        }   
+        }else if(ele.text != undefined){
+            //nur text
+            console.log("nur text");
+            container.innerHTML += createTitelBildText(ele);
+        }
     });
 }
 
 function createTitelBildText(ele, imgs = [], texts = []){
-    let r = '<article class="">'+
-    '<'+ele.type+'>'+ele.title+'</'+ele.type+'>';
+    let r = '<article class="">';
+    if(ele.title != undefined){
+        r += '<'+ele.type+'>'+ele.title+'</'+ele.type+'>';
+    }
+    if(ele.text != undefined){
+        r += '<p>'+ele.text+'</p>';
+    }
     if(imgs.length > 0){
         imgs.forEach((img)=>{
             r += '<img src="'+img+'" >';
@@ -287,7 +296,7 @@ function getLink(link, notInSelector = " ", notInSelector2 = " "){
             if(link.querySelectorAll("p") != null && link.querySelectorAll("p").length > 0){
                 let ps = link.querySelectorAll("p");
                 ps.forEach((p) => {
-                    psArray.push(p);
+                    psArray.push(p.innerHTML);
                 })
             }
             r = {
@@ -345,7 +354,7 @@ function getTitleAndSiblings(title, notInSelector = " ", notInSelector2 = " "){
 function getContents(selector, notInSelector = " ", notInSelector2 = " "){
     let rContents = [];
 
-    let contents = document.querySelectorAll(selector+" h1, "+selector+" h2, "+selector+" h3, "+selector+" h4, " + selector + " a");
+    let contents = document.querySelectorAll(selector+" h2, "+selector+" h3, "+selector+" h4, " + selector + " a, " + selector + " p");
     contents.forEach((elem)=>{
         if(elem.tagName === "A"){
             let link = getLink(elem, notInSelector, notInSelector2);
@@ -356,6 +365,11 @@ function getContents(selector, notInSelector = " ", notInSelector2 = " "){
             let title = getTitleAndSiblings(elem, notInSelector, notInSelector2);
             if(!isEmpty(title)){
                 rContents.push(title);
+            }
+        }if(elem.tagName === "P"){
+            let p = elem.innerHTML.replace(/<\/?[^>]+(>|$)/g, "");
+            if(p.length > 5){
+                rContents.push({"text" : p})
             }
         }
     });
