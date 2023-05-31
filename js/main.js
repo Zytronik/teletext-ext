@@ -1,9 +1,28 @@
 console.log("script loaded---");
-var pageContents = scrapeContent();
-console.log(pageContents);
-//deleteDOM();
-//setupPixelit();
-loadHTMLFile('teletext.html');
+
+let urlBanList = [
+    "google.com",
+    "netflix.com"
+];
+
+function isValidSite(){
+    let load = true;
+    urlBanList.forEach((site)=>{
+        if (window.location.href.indexOf(site) > -1) {
+            load = false;
+        }
+    });
+    return load;
+}
+
+var pageContents = {};
+
+if (isValidSite()) {
+    pageContents = scrapeContent();
+    console.log(pageContents);
+    //setupPixelit();
+    loadHTMLFile('teletext.html');
+}
 
 function loadHTMLFile(url){
     url = browser.runtime.getURL(url);
@@ -28,6 +47,32 @@ function loadData(){
     loadFavIMG();
     loadSiteTitle();
     setInterval(setCurrentDate, 1000);
+    loadContent();
+}
+
+function loadContent(){
+    pageContents.main.contents.forEach((ele) =>{
+        if(ele.linkUrl != undefined){
+            if(ele.content.img.length > 0 && ele.content.p.length > 0){
+                //link mit bild und text drin
+            }else if(ele.content.img.length > 0 && ele.content.p.length <= 0){
+                //link mit nur bild
+                createLinkIMGBlock(ele.linkUrl, ele.content.img);
+            }else if(ele.content.img.length <= 0 && ele.content.p.length > 0){
+                //link mit nur text
+            }
+        }else if(ele.title != undefined){
+            if(ele.title.nextIMGSiblings.length > 0 && ele.title.nextPSiblings.length > 0){
+                //title + bild + text
+            }else if(ele.title.nextIMGSiblings.length <= 0 && ele.title.nextPSiblings.length > 0){
+                //title + text
+            }
+        }   
+    });
+}
+
+function createLinkIMGBlock(url, imgURLs){
+    
 }
 
 function getTime() {
