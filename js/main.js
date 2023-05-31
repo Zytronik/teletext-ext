@@ -47,8 +47,10 @@ function loadData(){
     loadFavIMG();
     loadSiteTitle();
     setInterval(setCurrentDate, 1000);
-<<<<<<< HEAD
     loadContent();
+    initiateNav();
+    focusNavInput();
+    disableScrollWheel();
 }
 
 function loadContent(){
@@ -74,11 +76,6 @@ function loadContent(){
 
 function createLinkIMGBlock(url, imgURLs){
     
-=======
-    initiateNav();
-    focusNavInput();
-    disableScrollWheel();
->>>>>>> 609bb210fad84d2c60f3eb08ae6e6ddf334ccc20
 }
 
 function getTime() {
