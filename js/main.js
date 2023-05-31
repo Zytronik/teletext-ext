@@ -2,7 +2,8 @@ console.log("script loaded---");
 
 let urlBanList = [
     "google.com",
-    "netflix.com"
+    "netflix.com",
+    "web.whatsapp",
 ];
 
 function isValidSite(){
@@ -54,28 +55,77 @@ function loadData(){
 }
 
 function loadContent(){
+    let container = document.querySelector("#content-section");
     pageContents.main.contents.forEach((ele) =>{
         if(ele.linkUrl != undefined){
             if(ele.content.img.length > 0 && ele.content.p.length > 0){
                 //link mit bild und text drin
+                console.log("link mit bild und text drin");
+                container.innerHTML += createLinkIMGTextBlock(ele.linkUrl, ele.content.img, ele.content.p);
             }else if(ele.content.img.length > 0 && ele.content.p.length <= 0){
                 //link mit nur bild
-                createLinkIMGBlock(ele.linkUrl, ele.content.img);
+                console.log("link mit nur bild");
+                container.innerHTML += createLinkIMGTextBlock(ele.linkUrl, ele.content.img);
             }else if(ele.content.img.length <= 0 && ele.content.p.length > 0){
                 //link mit nur text
+                console.log("link mit nur text");
+                container.innerHTML += createLinkIMGTextBlock(ele.linkUrl, [], ele.content.p);
             }
         }else if(ele.title != undefined){
-            if(ele.title.nextIMGSiblings.length > 0 && ele.title.nextPSiblings.length > 0){
+            if(ele.nextIMGSiblings.length > 0 && ele.nextPSiblings.length > 0){
                 //title + bild + text
-            }else if(ele.title.nextIMGSiblings.length <= 0 && ele.title.nextPSiblings.length > 0){
+                console.log("title + bild + text");
+                container.innerHTML += createTitelBildText(ele, ele.nextIMGSiblings, ele.nextPSiblings);
+            }else if(ele.nextIMGSiblings.length <= 0 && ele.nextPSiblings.length > 0){
                 //title + text
+                console.log("title mit nur text");
+                container.innerHTML += createTitelBildText(ele, [], ele.nextPSiblings);
+            }else if(ele.nextIMGSiblings.length > 0 && ele.nextPSiblings.length <= 0){
+                //title + bild
+                console.log("title mit nur bild");
+                container.innerHTML += createTitelBildText(ele, ele.nextIMGSiblings);
+            }else if(ele.nextIMGSiblings.length <= 0 && ele.nextPSiblings.length <= 0){
+                //nur titel
+                console.log("nur titel");
+                container.innerHTML += createTitelBildText(ele);
             }
         }   
     });
 }
 
-function createLinkIMGBlock(url, imgURLs){
-    
+function createTitelBildText(ele, imgs = [], texts = []){
+    let r = '<article class="">'+
+    '<'+ele.type+'>'+ele.title+'</'+ele.type+'>';
+    if(imgs.length > 0){
+        imgs.forEach((img)=>{
+            r += '<img src="'+img+'" >';
+        });
+    }
+    if(texts.length > 0){
+        texts.forEach((text)=>{
+            r += '<p>'+text+'</p>';
+        });
+    }
+    r +=  '</article>';
+    return r;
+}
+
+function createLinkIMGTextBlock(url, imgs, texts = []){
+    let r = '<article class="">'+
+    '<a href="'+url+'">';
+    if(imgs.length > 0){
+        imgs.forEach((img)=>{
+            r += '<img src="'+img+'" >';
+        });
+    }
+    if(texts.length > 0){
+        texts.forEach((text)=>{
+            r += '<p>'+text+'</p>';
+        });
+    }
+    r +=  '</a>'+
+    '</article>';
+    return r;
 }
 
 function getTime() {
@@ -157,7 +207,7 @@ function deleteDOM(){
 
 function getBodyContents(){
     let r = {
-        "contents" : getContents("body", "header", "footer"),
+        "contents" : getContents("body"),
         //"imgs" : getImgs("body", "header"), //all imgs (not inside Links or inside Header or inside Footer)
     };
     //console.log("Body: ", r);
@@ -230,7 +280,7 @@ function getLink(link, notInSelector = " ", notInSelector2 = " "){
             if(link.querySelectorAll("img") != null && link.querySelectorAll("img").length > 0){
                 let imgs = link.querySelectorAll("img");
                 imgs.forEach((img) => {
-                    imgsArray.push(img);
+                    imgsArray.push(img.src);
                 })
             }
             let psArray = [];
@@ -260,19 +310,23 @@ function getTitleAndSiblings(title, notInSelector = " ", notInSelector2 = " "){
         let nextSiblings = getNextSiblings(title);
         nextSiblings.forEach((sibling)=>{
             if(sibling.tagName === "P"){
-                rPEles.push(sibling.innerHTML.replace(/<\/?[^>]+(>|$)/g, ""));
+                if(sibling.innerHTML.length > 3){
+                    rPEles.push(sibling.innerHTML/* .replace(/<\/?[^>]+(>|$)/g, "") */);
+                }
             }else if(sibling.tagName === "IMG"){
-                rIMGEles.push(sibling);
+                rIMGEles.push(sibling.src);
             }else{
                 if (sibling.nodeType === Node.ELEMENT_NODE && sibling.querySelector("h1, h2, h3, h4") != null && sibling.querySelector("h1, h2, h3, h4").length <= 0) {
                     let pElems = sibling.querySelectorAll("p");
                     pElems.forEach((pEle)=>{
-                        rPEles.push(pEle.innerHTML.replace(/<\/?[^>]+(>|$)/g, ""));
+                        if(pEle.innerHTML.length > 3){
+                            rPEles.push(pEle.innerHTML/* .replace(/<\/?[^>]+(>|$)/g, "") */);
+                        }
                     });
                     let imgElems = sibling.querySelectorAll("img");
                     imgElems.forEach((imgEle)=>{
                         if(imgEle.offsetWidth > 5){
-                            rIMGEles.push(imgEle.innerHTML.replace(/<\/?[^>]+(>|$)/g, ""));
+                            rIMGEles.push(imgEle.src/* innerHTML.replace(/<\/?[^>]+(>|$)/g, "") */);
                         }
                     });
                 }
@@ -409,7 +463,7 @@ function focusNavInput(){
 
 function initiateNav() {
     let numbers = document.querySelectorAll(".number");
-    //var navArray = [];
+    var navArray = [];
     navArray.digits = [];
     navArray.link = [];
     numbers.forEach((number) => {
