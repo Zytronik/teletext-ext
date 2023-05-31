@@ -499,12 +499,28 @@ function initiateNav() {
 
 function numberNav(number) {
 
-        if(number == 1){
-            document.querySelector('#nav-section').style.display = "block";
+        if(number <= 4){
+            navOverlays(number);
         }else{
             let navIndex = navArray.digits.indexOf(number);
             window.location.href = navArray.link[navIndex];
         }   
+}
+
+function navOverlays(number){
+    closeOverlays();
+    if(number <= 3){  
+        let targetOverlay = document.getElementsByClassName(number)[0];
+        targetOverlay.style.display = "block";
+    }
+    
+}
+
+function closeOverlays(){
+    let overlays = document.querySelectorAll('.overlay');
+    overlays.forEach((overlay)=>{
+        overlay.style.display = "none";
+    });
 }
 
 function disableScrollWheel(){

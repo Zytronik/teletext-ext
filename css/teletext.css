@@ -271,12 +271,7 @@ section{
     padding: 10vh 10vw;
 }
 
-#nav-section nav {
-    max-height: 100%;
-
-}
-
-#nav-section{
+#nav-section, #websites-section{
     position: fixed;
     top: calc(15vh + 40px);
     margin: 0;
@@ -286,21 +281,27 @@ section{
     max-width: 1400px;
 }
 
-#nav-section nav ul {
+section nav {
+    max-height: 100%;
+}
+
+
+
+section nav ul {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     height: calc(85vh - 220px);
 }
 
-#nav-section nav ul li{   
+section nav ul li{   
     width: 50%;
     padding: 20px 40px;
     font-size: 1.5rem;
     color: red;
 }
 
-#nav-section nav ul li span:first-of-type{   
+section nav ul li span:first-of-type{   
     margin-right: 20px;
     color: white;
 }
