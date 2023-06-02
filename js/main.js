@@ -21,7 +21,6 @@ var pageContents = {};
 if (isValidSite()) {
     pageContents = scrapeContent();
     console.log(pageContents);
-    //setupPixelit();
     loadHTMLFile('teletext.html');
 }
 
@@ -52,6 +51,7 @@ function loadData(){
     initiateNav();
     focusNavInput();
     disableScrollWheel();
+    pixelIt();
 }
 
 function loadContent(){
@@ -60,45 +60,45 @@ function loadContent(){
         if(ele.linkUrl != undefined){
             if(ele.content.img.length > 0 && ele.content.p.length > 0){
                 //link mit bild und text drin
-                console.log("link mit bild und text drin");
-                container.innerHTML += createLinkIMGTextBlock(ele.linkUrl, ele.content.img, ele.content.p);
+                //console.log("link mit bild und text drin");
+                container.innerHTML += createLinkIMGTextBlock(ele.linkUrl, ele.content.img, ele.content.p, "link img-text");
             }else if(ele.content.img.length > 0 && ele.content.p.length <= 0){
                 //link mit nur bild
-                console.log("link mit nur bild");
-                container.innerHTML += createLinkIMGTextBlock(ele.linkUrl, ele.content.img);
+                //console.log("link mit nur bild");
+                container.innerHTML += createLinkIMGTextBlock(ele.linkUrl, ele.content.img, [],  "link img-only");
             }else if(ele.content.img.length <= 0 && ele.content.p.length > 0){
                 //link mit nur text
-                console.log("link mit nur text");
-                container.innerHTML += createLinkIMGTextBlock(ele.linkUrl, [], ele.content.p);
+                //console.log("link mit nur text");
+                container.innerHTML += createLinkIMGTextBlock(ele.linkUrl, [], ele.content.p, "link text-only");
             }
         }else if(ele.title != undefined){
             if(ele.nextIMGSiblings.length > 0 && ele.nextPSiblings.length > 0){
                 //title + bild + text
-                console.log("title + bild + text");
-                container.innerHTML += createTitelBildText(ele, ele.nextIMGSiblings, ele.nextPSiblings);
+                //console.log("title + bild + text");
+                container.innerHTML += createTitelBildText(ele, ele.nextIMGSiblings, ele.nextPSiblings, "title-img-text");
             }else if(ele.nextIMGSiblings.length <= 0 && ele.nextPSiblings.length > 0){
                 //title + text
-                console.log("title mit nur text");
-                container.innerHTML += createTitelBildText(ele, [], ele.nextPSiblings);
+                //console.log("title mit nur text");
+                container.innerHTML += createTitelBildText(ele, [], ele.nextPSiblings, "title-text");
             }else if(ele.nextIMGSiblings.length > 0 && ele.nextPSiblings.length <= 0){
                 //title + bild
-                console.log("title mit nur bild");
-                container.innerHTML += createTitelBildText(ele, ele.nextIMGSiblings);
+                //console.log("title mit nur bild");
+                container.innerHTML += createTitelBildText(ele, ele.nextIMGSiblings, [],  "title-img");
             }else if(ele.nextIMGSiblings.length <= 0 && ele.nextPSiblings.length <= 0){
                 //nur titel
-                console.log("nur titel");
-                container.innerHTML += createTitelBildText(ele);
+                //console.log("nur titel");
+                container.innerHTML += createTitelBildText(ele, [], [], "title-only");
             }
         }else if(ele.text != undefined){
             //nur text
-            console.log("nur text");
-            container.innerHTML += createTitelBildText(ele);
+            //console.log("nur text");
+            container.innerHTML += createTitelBildText(ele, [], [], "text-only");
         }
     });
 }
 
-function createTitelBildText(ele, imgs = [], texts = []){
-    let r = '<article class="">';
+function createTitelBildText(ele, imgs = [], texts = [], className){
+    let r = '<article class="'+className+'">';
     if(ele.title != undefined){
         r += '<'+ele.type+'>'+ele.title+'</'+ele.type+'>';
     }
@@ -106,9 +106,15 @@ function createTitelBildText(ele, imgs = [], texts = []){
         r += '<p>'+ele.text+'</p>';
     }
     if(imgs.length > 0){
+        if(imgs.length > 1){
+            r +=  '<div class="img-wrapper multiple">';
+        }else{
+            r +=  '<div class="img-wrapper">';
+        }
         imgs.forEach((img)=>{
             r += '<img src="'+img+'" >';
         });
+        r +=  '</div>';
     }
     if(texts.length > 0){
         texts.forEach((text)=>{
@@ -119,13 +125,19 @@ function createTitelBildText(ele, imgs = [], texts = []){
     return r;
 }
 
-function createLinkIMGTextBlock(url, imgs, texts = []){
-    let r = '<article class="">'+
+function createLinkIMGTextBlock(url, imgs, texts = [], className){
+    let r = '<article class="'+className+'">'+
     '<a href="'+url+'">';
     if(imgs.length > 0){
+        if(imgs.length > 1){
+            r +=  '<div class="img-wrapper multiple">';
+        }else{
+            r +=  '<div class="img-wrapper">';
+        }
         imgs.forEach((img)=>{
             r += '<img src="'+img+'" >';
         });
+        r +=  '</div>';
     }
     if(texts.length > 0){
         texts.forEach((text)=>{
@@ -320,7 +332,16 @@ function getTitleAndSiblings(title, notInSelector = " ", notInSelector2 = " "){
         nextSiblings.forEach((sibling)=>{
             if(sibling.tagName === "P"){
                 if(sibling.innerHTML.length > 3){
-                    rPEles.push(sibling.innerHTML/* .replace(/<\/?[^>]+(>|$)/g, "") */);
+                    if(sibling.querySelectorAll("img") != undefined && sibling.querySelectorAll("img").length > 0){
+                        let imgElems = sibling.querySelectorAll("img");
+                        imgElems.forEach((imgEle) => {
+                            if (imgEle.offsetWidth > 5) {
+                                rIMGEles.push(imgEle.src);
+                            }
+                        });
+                    }else{
+                        rPEles.push(sibling.innerHTML/* .replace(/<\/?[^>]+(>|$)/g, "") */);
+                    }  
                 }
             }else if(sibling.tagName === "IMG"){
                 rIMGEles.push(sibling.src);
@@ -329,13 +350,23 @@ function getTitleAndSiblings(title, notInSelector = " ", notInSelector2 = " "){
                     let pElems = sibling.querySelectorAll("p");
                     pElems.forEach((pEle)=>{
                         if(pEle.innerHTML.length > 3){
-                            rPEles.push(pEle.innerHTML/* .replace(/<\/?[^>]+(>|$)/g, "") */);
+                            if(pEle.querySelectorAll("img").length > 0){
+                                let imgElems = sibling.querySelectorAll("img");
+                                imgElems.forEach((imgEle) => {
+                                    if (imgEle.offsetWidth > 5) {
+                                        rIMGEles.push(imgEle.src);
+                                    }
+                                });
+                            }else{
+                                rPEles.push(sibling.innerHTML/* .replace(/<\/?[^>]+(>|$)/g, "") */);
+                            }
+                            rPEles.push(pEle.innerHTML.replace(/<\/?[^>]+(>|$)/g, "") );
                         }
                     });
                     let imgElems = sibling.querySelectorAll("img");
                     imgElems.forEach((imgEle)=>{
                         if(imgEle.offsetWidth > 5){
-                            rIMGEles.push(imgEle.src/* innerHTML.replace(/<\/?[^>]+(>|$)/g, "") */);
+                            rIMGEles.push(imgEle.src);
                         }
                     });
                 }
@@ -406,57 +437,45 @@ function isEmpty(obj) {
     return true
 }
 
-function setupPixelit(){
-    console.log('pixelit');
-    let canvas = document.createElement("CANVAS");
-    canvas.getContext("2d");
-    canvas.style.height = "200px";
-    canvas.style.width = "200px";
-    canvas.style.top = "0px";
-    canvas.style.left = "0px";
-    canvas.style.position = "fixed";
-    canvas.setAttribute("id", "pixelitCanvas");
-    document.body.appendChild(canvas);
-   
-
-
-    let imgUrl = "https://www.hslu.ch/-/media/campus/common/images/teasers/h/startseite/2212-teaser-homepage-wb.jpg?la=de-ch&centercrop=0&h=168&w=386&usecustomfunctions=1";
-    let img = document.createElement("IMG");
-    img.setAttribute("src", imgUrl);
-    img.setAttribute("id", "pixelitImage");
-    document.body.appendChild(img);
-    
-    img.onload = function () {
-        pixelitTest();		
-    };
+function pixelIt(){
+    document.querySelectorAll("img").forEach((img)=>{
+        let canvas = document.createElement("CANVAS");
+        canvas.getContext("2d");
+        img.onload = function () {
+            canvas.style.height = img.offsetHeight;
+            canvas.style.width = img.offsetWidth;
+            img.parentNode.insertBefore(canvas, img.nextSibling);
+            const pixelitConfig = {
+                to : canvas,
+                from : img,
+                scale : 20,
+                palette : [[26,28,44], [93,39,93], [177, 62, 83],[239, 125, 87]], 
+                maxHeight: img.offsetHeight,
+                maxWidth: img.offsetWidth,
+            }
+            const px = new pixelit(pixelitConfig);
+            px.draw().pixelate().convertPalette();
+            //img.src = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            //showElement(img);
+            // hideElement(canvas);
+        }
+    });/* 
+    document.querySelector("#loading").style.display = "none"; */
+    //console.log("full loaded");
 }
 
-function pixelitTest(){
-    console.log('pixelitTest');
-    let pixelitCanvas = document.getElementById("pixelitCanvas");
-    let pixelitImage = document.getElementById("pixelitImage");
+function hideElement(ele){
+    ele.style.visibility = "hidden";
+    ele.style.position ="fixed";
+    ele.style.zIndex = "-100";
+}
 
-    const pixelitConfig = {
-        to : pixelitCanvas,
-        //defaults to document.getElementById("pixelitcanvas")
-        from : pixelitImage, 
-        //defaults to document.getElementById("pixelitimg")
-        scale : 20,
-        
-        palette : [[26,28,44], [93,39,93], [177, 62, 83],[239, 125, 87]], 
-        
-        
-        maxHeight: pixelitCanvas.height, 
-        //defaults to null
-        maxWidth: pixelitCanvas.width, 
-        //defaults to null
-      }
-
-    const px = new pixelit(pixelitConfig);
-    //console.log(px);
-    px.draw().pixelate().convertPalette();
-
-    //var newImage = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+function showElement(ele){
+    ele.style.visibility = "visible";
+    ele.style.position ="static";
+    ele.style.zIndex = "1";
+    ele.style.top = "unset";
+    ele.style.left = "unset";
 }
 
 function focusNavInput(){
