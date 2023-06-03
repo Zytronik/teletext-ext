@@ -129,16 +129,29 @@ h1{
 
 }
 
-h2, h3, h4{
+h2{
     font-family: 'Silkscreen';
     font-weight: normal;
-}
-
-h3{
     font-size: 2.5rem;
     color: blue;
     margin-bottom: 20px;
     background: white;
+    position: relative;
+    margin-top: 120px;
+}
+
+h3{
+    font-family: 'Silkscreen';
+    font-weight: normal;
+    font-size: 2.5rem;
+    color: red;
+    margin-bottom: 20px;
+    position: relative;
+    margin-top: 120px;
+}
+
+a{
+    color: rgb(0, 255, 0);
 }
 
 p{
@@ -346,6 +359,11 @@ section .img-wrapper.multiple {
 
 section .img-wrapper.multiple canvas {
     width: calc(50% - 7.5px);
+}
+
+#content-section{
+    position: relative;
+    z-index: -1;
 }
 
 #content-section > article{

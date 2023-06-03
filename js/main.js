@@ -449,7 +449,7 @@ function pixelIt(){
                 to : canvas,
                 from : img,
                 scale : 20,
-                palette : [[26,28,44], [93,39,93], [177, 62, 83],[239, 125, 87]], 
+                palette : [[0,0,0], [255,0,0], [0, 255, 0],[0, 0, 255]], 
                 maxHeight: img.offsetHeight,
                 maxWidth: img.offsetWidth,
             }
@@ -499,6 +499,7 @@ function initiateNav() {
     var navArray = [];
     navArray.digits = [];
     navArray.link = [];
+    console.log(navArray);
     numbers.forEach((number) => {
         navArray.digits.push(number.innerHTML);
         navArray.link.push($(number).parent().attr('href'));
@@ -510,13 +511,13 @@ function initiateNav() {
         if (e.code === "Enter") {  //checks whether the pressed key is "Enter"
             let number = numberInput.value;
             numberInput.value= "";
-            numberNav(number);
+            numberNav(number, navArray);
         } 
         
     });
 }
 
-function numberNav(number) {
+function numberNav(number, navArray) {
 
         if(number <= 4){
             navOverlays(number);
