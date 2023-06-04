@@ -129,6 +129,16 @@ h1{
 
 }
 
+#site-title{
+    font-family: 'Kemco Pixel';
+    font-size: 4rem;
+    text-align: center;
+    color: rgb(0, 255, 0);
+    background: none;
+    margin-bottom: 100px;
+    margin-top: 0px;
+}
+
 h2{
     font-family: 'Silkscreen';
     font-weight: normal;

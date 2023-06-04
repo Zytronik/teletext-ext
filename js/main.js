@@ -157,7 +157,15 @@ function getTime() {
 }
 
 function loadSiteTitle(){
-    document.querySelector("h1").innerHTML = pageContents.header.siteTitle;
+
+    //website title
+    let title = window.location.href;
+    title = title.split('/');
+    //console.log(title);
+    document.querySelector("h1").innerHTML = title[2];
+
+    //site title
+    document.querySelector("#site-title").innerHTML = pageContents.header.siteTitle;
 }
 
 function loadFavIMG(){
@@ -499,14 +507,27 @@ function pixelIt(){
             canvas.style.height = img.offsetHeight;
             canvas.style.width = img.offsetWidth;
             img.parentNode.insertBefore(canvas, img.nextSibling);
-            const pixelitConfig = {
-                to : canvas,
-                from : img,
-                scale : 20,
-                palette : [[0,0,0], [255,0,0], [0, 255, 0],[0, 0, 255]], 
-                maxHeight: img.offsetHeight,
-                maxWidth: img.offsetWidth,
+
+            if (img.getAttribute('src').indexOf('favicon') != -1){
+                var pixelitConfig = {
+                    to : canvas,
+                    from : img,
+                    scale : 20,
+                    palette : [[0,0,0], [255,0,0], [255, 255, 255]], 
+                    maxHeight: img.offsetHeight,
+                    maxWidth: img.offsetWidth,
+                }
+            }else{
+                var pixelitConfig = {
+                    to : canvas,
+                    from : img,
+                    scale : 20,
+                    palette : [[0,0,0], [255,0,0], [0, 255, 0],[0, 0, 255]], 
+                    maxHeight: img.offsetHeight,
+                    maxWidth: img.offsetWidth,
+                }
             }
+
             const px = new pixelit(pixelitConfig);
             px.draw().pixelate().convertPalette();
             //img.src = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
@@ -553,7 +574,7 @@ function initiateNav() {
     var navArray = [];
     navArray.digits = [];
     navArray.link = [];
-    console.log(navArray);
+    //console.log(navArray);
     numbers.forEach((number) => {
         navArray.digits.push(number.innerHTML);
         navArray.link.push($(number).parent().attr('href'));
@@ -573,7 +594,9 @@ function initiateNav() {
 
 function numberNav(number, navArray) {
 
-        if(number <= 4){
+        if(number == 1){
+            window.location.href = window.location.origin
+        }else if(number <= 4 && number >= 2){
             navOverlays(number);
         }else{
             let navIndex = navArray.digits.indexOf(number);
@@ -586,6 +609,8 @@ function navOverlays(number){
     if(number <= 3){  
         let targetOverlay = document.getElementsByClassName(number)[0];
         targetOverlay.style.display = "block";
+    }else{
+        history.back();
     }
     
 }
