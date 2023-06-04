@@ -283,7 +283,7 @@ function getSiteTitle(){
 }
 
 function getHeaderContents(){
-    const linkTextBanList = ["sign", "login", "log in"];
+    const linkTextBanList = ["sign", "login", "log in", "en", "de"];
     let rNavLinks = [];
     let r = {
         "siteTitle" : getSiteTitle(),

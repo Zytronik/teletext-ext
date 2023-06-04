@@ -1,10 +1,10 @@
 {
-  "name": "test-extension",
+  "name": "Teletext Converter",
   "version": "0.0.1",
-  "description": "lorem ipsum i guess",
+  "description": "Diese Extension verwandelt Webseiten in Teletext.",
   "manifest_version": 2,
   "icons": {
-    "201": "img/klee.gif"
+    "201": "img/icon.png"
   },
   "content_scripts": [
     {
