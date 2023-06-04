@@ -200,9 +200,9 @@ function hasLongWord(str){
                 longest = words[i];
             }
         }
-        return longest.length > 12
+        return longest.length > 15
     }
-    return str.length > 12
+    return str.length > 15
 }
 
 function setCurrentDate() {
@@ -612,12 +612,21 @@ function numberNav(number, navArray) {
 }
 
 function navOverlays(number){
-    closeOverlays();
-    if(number <= 3){  
+    if(number <= 3){
+        closeOverlays();
         let targetOverlay = document.getElementsByClassName(number)[0];
         targetOverlay.style.display = "block";
     }else{
-        history.back();
+        let o2 = document.querySelector("#nav-section");
+        let o3 = document.querySelector("#websites-section");
+        if(o2.style.display === "block"){
+            o2.style.display = "none";
+        }else if(o3.style.display === "block"){
+            o3.style.display = "none";
+        }else{
+            history.back();
+        }
+        closeOverlays();
     }
     
 }
