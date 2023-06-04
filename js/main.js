@@ -177,8 +177,8 @@ function loadNavData(){
     if(pageContents.header.navLinks.length > 0){
         let counter = 0;
         pageContents.header.navLinks.forEach((ele, i) => {
-            if (!hasLongWord(removeSpecialChars(ele.content.data)) && counter < 12) {
-                navList.innerHTML += '<li><a href="' + ele.url + '"><span class="number">' + ((i + 1) * 100) + '</span><span>' + removeSpecialChars(ele.content.data) + '</span></a></li>'
+            if (!hasLongWord(removeSpecialChars(ele.content.data)) && counter < 13) {
+                navList.innerHTML += '<li><a href="' + ele.url + '"><span class="number">' + ((counter + 1) * 100) + '</span><span>' + removeSpecialChars(ele.content.data) + '</span></a></li>'
                 counter++;
             }
         });
@@ -200,9 +200,9 @@ function hasLongWord(str){
                 longest = words[i];
             }
         }
-        return longest.length > 20
+        return longest.length > 12
     }
-    return str.length > 20
+    return str.length > 12
 }
 
 function setCurrentDate() {
@@ -298,13 +298,13 @@ function getHeaderContents(){
             if(index === 0){
                 headerLinks = document.querySelectorAll("header nav:first-of-type a, header nav.main a");
             }else{
-                headerLinks = document.querySelectorAll("nav:first-of-type a");
+                headerLinks = document.querySelectorAll("nav a");
             }
             headerLinks.forEach((link)=>{
                 if(link.offsetWidth > 5 &&
-                !link.hasAttribute("hreflang") &&
+                /* !link.hasAttribute("hreflang") && */
                 !linkTextBanList.some(v => link.innerHTML.toLowerCase().includes(v)) &&
-                link.children.length == 0 
+                link.innerHTML.length > 0 
                 /* || (link.children.length > 0 && link.children[0].tagName === "IMG") */
                 && (link.tagName === "P" || link.tagName === "A" || link.tagName === "SPAN")){
                     if (link.hasAttribute("href")) {
@@ -528,8 +528,15 @@ function pixelIt(){
                 }
             }
 
-            const px = new pixelit(pixelitConfig);
-            px.draw().pixelate().convertPalette();
+            
+            try {
+                const px = new pixelit(pixelitConfig);
+                px.draw().pixelate().convertPalette();
+            }
+            catch (err) {
+
+            } 
+            
             //img.src = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
             //showElement(img);
             // hideElement(canvas);
