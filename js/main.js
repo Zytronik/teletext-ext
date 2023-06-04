@@ -167,12 +167,34 @@ function loadFavIMG(){
 function loadNavData(){
     let navList = document.querySelector("#nav-section nav ul");
     if(pageContents.header.navLinks.length > 0){
-        pageContents.header.navLinks.forEach((ele, i)=>{
-            navList.innerHTML += '<li><a href="'+ele.url+'"><span class="number">'+((i+1) * 100)+'</span><span>'+ele.content.data+'</span></a></li>'
+        let counter = 0;
+        pageContents.header.navLinks.forEach((ele, i) => {
+            if (!hasLongWord(removeSpecialChars(ele.content.data)) && counter < 12) {
+                navList.innerHTML += '<li><a href="' + ele.url + '"><span class="number">' + ((i + 1) * 100) + '</span><span>' + removeSpecialChars(ele.content.data) + '</span></a></li>'
+                counter++;
+            }
         });
     }else{
         document.querySelector("#nav-section").style.display = "none";
     }
+}
+
+function removeSpecialChars(str){
+    return str.replace('\n','').replace('\t','');
+}
+
+function hasLongWord(str){
+    if(str.indexOf(' ') >= 0){
+        let words = str.split(" ");
+        let longest = "";
+        for (let i = 0; i < words.length; i++) {
+            if (words[i].length > longest.length) {
+                longest = words[i];
+            }
+        }
+        return longest.length > 20
+    }
+    return str.length > 20
 }
 
 function setCurrentDate() {
@@ -262,30 +284,62 @@ function getHeaderContents(){
         "navLinks" : rNavLinks, //navigation Links
         //"imgs" : getImgs("header"), //all imgs (not inside Links)
     };
-    let headerLinks = document.querySelectorAll("header nav:first-of-type a, header nav.main a");
-    headerLinks.forEach((link)=>{
-        if(link.hasAttribute("href") &&
-        link.offsetWidth > 5 &&
-        !link.hasAttribute("hreflang") &&
-        !linkTextBanList.some(v => link.innerHTML.toLowerCase().includes(v)) &&
-        link.children.length == 0 
-        /* || (link.children.length > 0 && link.children[0].tagName === "IMG") */
-        && (link.tagName === "P" || link.tagName === "A" || link.tagName === "SPAN")){
-            let type = "text";
-            let content = link.innerHTML.replace(/<\/?[^>]+(>|$)/g, "");
-            if(link.children.length > 0 && link.children[0].tagName === "IMG"){
-                type = "img";
-                content = link.children[0].src;
+    let headerLinks = "";
+    for (let index = 0; index < 2; index++) {
+        if(headerLinks.length <= 0){
+            if(index === 0){
+                headerLinks = document.querySelectorAll("header nav:first-of-type a, header nav.main a");
+            }else{
+                headerLinks = document.querySelectorAll("nav:first-of-type a");
             }
-            rNavLinks.push({
-                "url" : link.href,
-                "content" : {
-                    "type" : type,
-                    "data" : content,
+            headerLinks.forEach((link)=>{
+                if(link.offsetWidth > 5 &&
+                !link.hasAttribute("hreflang") &&
+                !linkTextBanList.some(v => link.innerHTML.toLowerCase().includes(v)) &&
+                link.children.length == 0 
+                /* || (link.children.length > 0 && link.children[0].tagName === "IMG") */
+                && (link.tagName === "P" || link.tagName === "A" || link.tagName === "SPAN")){
+                    if (link.hasAttribute("href")) {
+                        //if(link.attr("href") == "javascript:;"){
+                            //console.log(link.innerHTML);
+                        //}else{
+                            let type = "text";
+                            let content = link.innerHTML.replace(/<\/?[^>]+(>|$)/g, "");
+                            if (link.children.length > 0 && link.children[0].tagName === "IMG") {
+                                type = "img";
+                                content = link.children[0].src;
+                            }
+                            rNavLinks.push({
+                                "url": link.href,
+                                "content": {
+                                    "type": type,
+                                    "data": content,
+                                }
+                            })
+                        //}
+                    }else{
+                        link.parentNode.querySelectorAll("a + * ul li a").forEach((subLink)=>{
+                            if(subLink.innerHTML.length > 0 && subLink.innerHTML != "<empty string>"){
+                                let type = "text";
+                                let content = subLink.innerHTML.replace(/<\/?[^>]+(>|$)/g, "");
+                                if (subLink.children.length > 0 && subLink.children[0].tagName === "IMG") {
+                                    type = "img";
+                                    content = subLink.children[0].src;
+                                }
+                                rNavLinks.push({
+                                    "url": subLink.href,
+                                    "content": {
+                                        "type": type,
+                                        "data": content,
+                                    }
+                                })
+                            }
+                        });
+                    }
                 }
-            })
+            });
         }
-    });
+    }
     //console.log("Header: ", r);
     return r;
 }
